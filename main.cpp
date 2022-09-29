@@ -11,6 +11,7 @@
 #include <memory>
 #include <algorithm>
 #include <string>
+#include <array>
 
 
 typedef std::tuple<double, double> data_tuple;
