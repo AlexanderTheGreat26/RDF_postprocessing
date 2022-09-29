@@ -36,7 +36,7 @@ void plot (const std::string & name, const double & left, const double & right,
 
 
 int main () {
-    int data_files_count = fromString<int>(exec("cd gOH && find . -type f | wc -l"));
+    int data_files_count = fromString<int>(exec("find ./gOH -type f | wc -l"));
     std::vector<data_tuple> collected_data = std::move(collection("gOH/gOH.", data_files_count));
     averaging(collected_data, data_files_count);
 
