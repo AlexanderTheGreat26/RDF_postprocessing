@@ -1,3 +1,5 @@
+/* Just postprocessing of several RDFs in text-files. */
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -51,7 +53,7 @@ int main () {
     return 0;
 }
 
-// files_count find . -type f | wc -l
+
 //The function returns the terminal ans. Input - string for term.
 std::string exec (const std::string& str) {
     const char* cmd = str.c_str();
@@ -66,6 +68,7 @@ std::string exec (const std::string& str) {
 }
 
 
+// Returns number from string.
 template<typename T>
 T fromString (const std::string& s) {
     std::istringstream iss(s);
@@ -90,7 +93,7 @@ namespace std {
     }
 }
 
-
+// Read data from columns in text-file.
 std::vector<data_tuple> coordinates_read (const std::string & name) {
     std::ifstream fin(name);
     if (!fin.is_open()) throw std::runtime_error("Error opening file.");
@@ -112,6 +115,7 @@ std::string toString (T val) {
 }
 
 
+// Collects data in tuples for averaging.
 template<size_t Is = 0, typename... Tp>
 void sum_coordinates (std::tuple<Tp...>& coordinate, std::tuple<Tp...>& new_data) {
     std::get<Is>(coordinate) += std::get<Is>(new_data);
@@ -120,6 +124,7 @@ void sum_coordinates (std::tuple<Tp...>& coordinate, std::tuple<Tp...>& new_data
 }
 
 
+// Collects data from all files in one std::vector<data_tuple>.
 std::vector<data_tuple> collection (const std::string & files_name, int & data_files_count) {
     std::vector<data_tuple> data = coordinates_read(files_name + toString(0));
     if (data_files_count == 1) return data;
@@ -132,6 +137,7 @@ std::vector<data_tuple> collection (const std::string & files_name, int & data_f
 }
 
 
+// Averaging tuples content.
 template<size_t Is = 0, typename... Tp>
 void averaged_coordinates (std::tuple<Tp...>& coordinate, const double & data_count) {
     std::get<Is>(coordinate) /= data_count;
@@ -139,13 +145,14 @@ void averaged_coordinates (std::tuple<Tp...>& coordinate, const double & data_co
         averaged_coordinates <Is + 1>(coordinate, data_count);
 }
 
-
+// Averaging data in std::vector<data_tuple>.
 void averaging (std::vector<data_tuple> & data, int & data_count) {
     for (auto & i : data)
         averaged_coordinates(i, data_count);
 }
 
 
+// Creates std::vector<double> of points between left_border and right_border with given step.
 std::vector <double> mesh (double left_border, const double & right_border, const double & step) {
     std::vector <double> xx ((right_border-left_border) / step);
     std::generate(xx.begin(), xx.end(), [&] {left_border += step; return left_border;});
@@ -153,6 +160,7 @@ std::vector <double> mesh (double left_border, const double & right_border, cons
 }
 
 
+// Creates two std::vector<double> from std::vector<data_tuple>.
 void data_from_tuple_vector (std::vector<data_tuple> & data, std::vector<double> & x, std::vector<double> & y) {
     for (auto & i : data) {
         x.emplace_back(std::get<0>(i));
@@ -161,6 +169,7 @@ void data_from_tuple_vector (std::vector<data_tuple> & data, std::vector<double>
 }
 
 
+// Two functions below need for creation of cubic spline (like matlab spline) for representation.
 std::vector<double> spline_moments (std::vector<double> & f, double & h) {
     std::vector<double> m;
     int n = f.size()-1;
@@ -191,6 +200,7 @@ std::vector<double> cubic_spline (std::vector<data_tuple> & data, std::vector<do
 }
 
 
+// Creates data-file from two std::vector<double> of coordinates with given name.
 void data_file_creation (const std::string & name, std::vector<double> & x, std::vector<double> & y) {
     std::ofstream fout;
     fout.open(name, std::ios::trunc);
@@ -200,6 +210,7 @@ void data_file_creation (const std::string & name, std::vector<double> & x, std:
 }
 
 
+// Creates plot from text-file of coordinates via GNUPlot.
 void plot (const std::string & name, const double & left, const double & right,
            const std::string & title, const std::string & xlabel, const std::string & ylabel) {
     std::string range = "[" + toString(left) + ":" + toString(right) + "]";
