@@ -37,7 +37,7 @@ void plot (const std::string & name, const double & left, const double & right,
 
 int main () {
     int data_files_count = fromString<int>(exec("cd gOH && find . -type f | wc -l"));
-    std::vector<data_tuple> collected_data = std::move(collection("gOH.", data_files_count));
+    std::vector<data_tuple> collected_data = std::move(collection("gOH/gOH.", data_files_count));
     averaging(collected_data, data_files_count);
 
     double left_border = std::get<0>(collected_data[0]);
