@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+mkdir gOH
 trajworks=~/./i-Pi_toolbox/bin/trajworks
 for (( a = 0; a < 6; a++ ))
 do
