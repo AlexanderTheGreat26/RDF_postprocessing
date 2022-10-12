@@ -4,5 +4,5 @@ mkdir gOH
 trajworks=~/./i-Pi_toolbox/bin/trajworks
 for (( a = 0; a < 6; a++ ))
 do
-$trajworks -ipdb -vbox -fstart 10 -gr -gr1 O -gr2 H -grmax 5 -grbins 250 -hwin triangle -hwinfac 2 < base_p-1.pos_$a.pdb > gOh/gOH.$a
+$trajworks -ipdb -vbox -fstart 10 -gr -gr1 O -gr2 H -grmax 5 -grbins 250 -hwin triangle -hwinfac 2 < base_p-1.pos_$a.pdb > gOH/gOH.$a
 done
