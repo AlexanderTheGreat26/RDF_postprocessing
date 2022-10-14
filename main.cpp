@@ -19,7 +19,9 @@ typedef std::tuple<double, double> data_tuple;
 
 std::vector <double> mesh (double left_border, const double & right_border, const double & step);
 
-std::vector<double> cubic_spline (std::vector<data_tuple> & data, std::vector<double> & xx);
+void data_from_tuple_vector (std::vector<data_tuple> & data, std::vector<double> & x, std::vector<double> & y);
+
+std::vector<double> cubic_spline(std::vector<double> &x, std::vector<double> &f, std::vector<double> &xx);
 
 std::string exec (const std::string& str);
 
@@ -48,7 +50,13 @@ int main () {
     double mesh_step = (right_border-std::get<0>(collected_data[collected_data.size()-2]))/10.00;
 
     std::vector<double> xx = std::move(mesh(left_border, right_border, mesh_step));
-    std::vector<double> yy = std::move(cubic_spline(collected_data, xx));
+
+    std::vector<double> x, y;
+    data_from_tuple_vector(collected_data, x, y);
+
+    std::vector<double> yy = std::move(cubic_spline(x, y, xx));
+
+
     data_file_creation("splined.txt", xx, yy);
     plot ("splined", left_border, right_border, "RDF", "r, Angstroms", "a.u.");
     return 0;
@@ -93,6 +101,7 @@ namespace std {
         return out;
     }
 }
+
 
 // Read data from columns in text-file.
 std::vector<data_tuple> coordinates_read (const std::string & name) {
@@ -181,9 +190,8 @@ std::vector<double> spline_moments (std::vector<double> & f, double & h) {
     return m;
 }
 
-std::vector<double> cubic_spline (std::vector<data_tuple> & data, std::vector<double> & xx) {
-    std::vector<double> x, f, yy;
-    data_from_tuple_vector(data, x, f);
+std::vector<double> cubic_spline(std::vector<double> &x, std::vector<double> &f, std::vector<double> &xx) {
+    std::vector<double> yy;
     int i = 0;
     double h = x[1] - x[0];
     std::vector<double> m = std::move(spline_moments(f, h));
